@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="output"></div>
+    <script>
+      fetch("http://localhost:4000/v1/forms", {
+        method: "POST",
+        headers: {
+          "Authorization": "u&CNCVrk2s*VmKzn",
+          "X-Operation": "FORM",
+          "X-Response-Type": "html",
+          "X-JSON-Payload": JSON.stringify({ name: "Alice", age: 25 })
+        }
+      })
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("output").innerHTML = html;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Form Viewer - JSON Utils</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        /* Previous CSS styles remain the same - adding new upload styles */
+        :root {
+            --primary-color: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --info-color: #3b82f6;
+
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-dark: #0f172a;
+            --bg-code: #1e293b;
+
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+
+            --border-color: #e2e8f0;
+            --border-focus: var(--primary-color);
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'Fira Code', 'Monaco', 'Consolas', monospace;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-code: #0f172a;
+
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-light: #64748b;
+
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            gap: 2rem;
+            padding: 2rem 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Left Panel - Input */
+        .input-panel {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .panel-content {
+            padding: 1.5rem;
+        }
+
+        /* FILE UPLOAD SECTION - NEW */
+        .upload-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            background: var(--bg-secondary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            border-style: solid;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .upload-area:hover .upload-icon {
+            color: var(--primary-color);
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .upload-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* File Info Display */
+        .file-info {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .file-info.show {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .file-name {
+            font-weight: 500;
+        }
+
+        .file-size {
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .clear-file {
+            background: none;
+            border: none;
+            color: var(--error-color);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: var(--radius-sm);
+            transition: background 0.2s ease;
+        }
+
+        .clear-file:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .divider-text {
+            padding: 0 1rem;
+            background: var(--bg-primary);
+        }
+
+        /* Enhanced Input Section */
+        .input-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .input-action-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .input-action-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .json-input {
+            width: 100%;
+            min-height: 300px;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            resize: vertical;
+            transition: border-color 0.2s ease;
+        }
+
+        .json-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .json-input.has-content {
+            border-color: var(--success-color);
+        }
+
+        /* Sample Data Section */
+        .sample-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sample-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .sample-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sample-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Framework Selection */
+        .framework-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .framework-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .framework-option {
+            position: relative;
+        }
+
+        .framework-radio {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .framework-label {
+            display: block;
+            padding: 0.75rem;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .framework-radio:checked + .framework-label {
+            border-color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary-color);
+        }
+
+        .framework-label:hover {
+            border-color: var(--primary-color);
+        }
+
+        /* Action Buttons */
+        .action-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Rest of the CSS remains the same as previous version... */
+        /* Output Panel, Tabs, Code Display, etc. */
+
+        .output-panel {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            height: fit-content;
+        }
+
+        .output-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-button {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+            background: var(--bg-primary);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .tab-content {
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .form-preview {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            min-height: 300px;
+        }
+
+        .generated-form {
+            max-width: 600px;
+        }
+
+        .generated-form .form-group,
+        .generated-form .mb-3,
+        .generated-form .input-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .generated-form .form-label,
+        .generated-form label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .generated-form .form-control,
+        .generated-form .input-field input,
+        .generated-form input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: border-color 0.2s ease;
+        }
+
+        .generated-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .code-display {
+            background: var(--bg-code);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .copy-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .code-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info-color);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.75rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .input-panel {
+                position: relative;
+                top: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+
+            .header-content {
+                padding: 0.75rem 0;
+            }
+
+            .main-layout {
+                padding: 1.5rem 0;
+                gap: 1rem;
+            }
+
+            .panel-content {
+                padding: 1rem;
+            }
+
+            .framework-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .action-section {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-area {
+                padding: 1.5rem 1rem;
+            }
+
+            .sample-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden { display: none; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+
+<body data-theme="light">
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">JS</div>
+                    JSON Form Viewer
+                </a>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path class="sun-icon" d="M12 17.5a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM12 1.5a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1zm0 17a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1zM22.5 12a1 1 0 01-1 1h-1a1 1 0 01-0-2h1a1 1 0 011 1zm-17 0a1 1 0 01-1 1h-1a1 1 0 01-0-2h1a1 1 0 011 1z"/>
+                            <path class="moon-icon hidden" d="M21.5 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-layout">
+            <!-- Input Panel with Upload Functionality -->
+            <div class="input-panel">
+                <div class="panel-header">
+                    <div>📝 JSON Input</div>
+                </div>
+                <div class="panel-content">
+                    <!-- FILE UPLOAD SECTION - NEW -->
+                    <div class="upload-section">
+                        <label class="section-label">Upload JSON File:</label>
+                        <div class="upload-area" id="uploadArea">
+                            <input 
+                                type="file" 
+                                id="fileInput" 
+                                class="file-input" 
+                                accept=".json,.txt"
+                                aria-label="Upload JSON file"
+                            >
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8s0 0 0 0l-6-6z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                            <div class="upload-text">Drop your JSON file here</div>
+                            <div class="upload-subtext">or click to browse (.json, .txt files)</div>
+                            <button type="button" class="upload-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m14-7l-5-5-5 5m5-5v12"/>
+                                </svg>
+                                Choose File
+                            </button>
+                        </div>
+                        <div class="file-info" id="fileInfo">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="file-name" id="fileName">filename.json</span>
+                            <span class="file-size" id="fileSize">2.5 KB</span>
+                            <button class="clear-file" id="clearFile" title="Clear file">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18 6L6 18M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- DIVIDER -->
+                    <div class="divider">
+                        <div class="divider-text">or paste JSON below</div>
+                    </div>
+
+                    <!-- ENHANCED INPUT SECTION -->
+                    <div class="input-section">
+                        <div class="input-header">
+                            <label class="section-label" for="jsonInput">JSON Content:</label>
+                            <div class="input-actions">
+                                <button class="input-action-btn" id="clearInput" title="Clear input">Clear</button>
+                                <button class="input-action-btn" id="formatJson" title="Format JSON">Format</button>
+                            </div>
+                        </div>
+                        <textarea 
+                            id="jsonInput" 
+                            class="json-input" 
+                            placeholder='{
+  "name": "Alice",
+  "age": 25,
+  "email": "alice@example.com",
+  "address": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "zipCode": "12345"
+  },
+  "preferences": {
+    "newsletter": true,
+    "theme": "dark"
+  }
+}'></textarea>
+                    </div>
+
+                    <!-- SAMPLE DATA SECTION -->
+                    <div class="sample-section">
+                        <label class="section-label">Quick Start Samples:</label>
+                        <div class="sample-buttons">
+                            <button class="sample-btn" data-sample="simple">Simple Form</button>
+                            <button class="sample-btn" data-sample="complex">Complex Form</button>
+                            <button class="sample-btn" data-sample="nested">Nested Objects</button>
+                            <button class="sample-btn" data-sample="ecommerce">E-commerce</button>
+                        </div>
+                    </div>
+
+                    <div class="framework-section">
+                        <label class="section-label">CSS Framework:</label>
+                        <div class="framework-grid">
+                            <div class="framework-option">
+                                <input type="radio" id="none" name="framework" value="none" class="framework-radio" checked>
+                                <label for="none" class="framework-label">None</label>
+                            </div>
+                            <div class="framework-option">
+                                <input type="radio" id="bootstrap" name="framework" value="bootstrap" class="framework-radio">
+                                <label for="bootstrap" class="framework-label">Bootstrap</label>
+                            </div>
+                            <div class="framework-option">
+                                <input type="radio" id="materialize" name="framework" value="materialize" class="framework-radio">
+                                <label for="materialize" class="framework-label">Materialize</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-section">
+                        <button id="generateForm" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M13 3a9 9 0 010 18c-.83 0-1.54-.5-1.84-1.22l.27-.06A7 7 0 1113 5.05V3z"/>
+                            </svg>
+                            Generate Form
+                        </button>
+                        <button id="validateJson" class="btn btn-secondary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Validate
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Panel (same as before) -->
+            <div class="output-panel">
+                <div class="output-tabs">
+                    <button class="tab-button active" data-tab="form">Form Preview</button>
+                    <button class="tab-button" data-tab="html">HTML Code</button>
+                    <button class="tab-button" data-tab="schema">JSON Schema</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="formTab" class="tab-pane active">
+                        <div id="statusMessage" class="status-message status-info">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Upload a JSON file or enter JSON to generate form
+                        </div>
+                        <div class="form-preview">
+                            <div id="formOutput" class="generated-form text-center">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color: var(--text-light); margin-bottom: 1rem;">
+                                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <p style="color: var(--text-muted);">Form preview will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="htmlTab" class="tab-pane">
+                        <div class="code-display">
+                            <div class="code-header">
+                                <span>Generated HTML</span>
+                                <button class="copy-button" id="copyHtml">Copy Code</button>
+                            </div>
+                            <div class="code-content">
+                                <pre id="htmlCode"><code>// HTML code will appear here after generating form</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="schemaTab" class="tab-pane">
+                        <div class="code-display">
+                            <div class="code-header">
+                                <span>JSON Schema</span>
+                                <button class="copy-button" id="copySchema">Copy Schema</button>
+                            </div>
+                            <div class="code-content">
+                                <pre id="schemaCode"><code>// JSON Schema will appear here after generating form</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <script>
+        // Enhanced Application State
+        const state = {
+            currentTheme: localStorage.getItem('theme') || 'light',
+            apiKey: 'your-api-key',
+            baseUrl: 'http://localhost:4000/v1',
+            currentFile: null
+        };
+
+        // Sample Data Templates
+        const sampleData = {
+            simple: {
+                "name": "John Doe",
+                "email": "john@example.com",
+                "age": 30
+            },
+            complex: {
+                "firstName": "Alice",
+                "lastName": "Johnson",
+                "email": "alice.johnson@email.com",
+                "phone": "+1-555-0123",
+                "dateOfBirth": "1995-03-15",
+                "address": {
+                    "street": "123 Main Street",
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zipCode": "94102"
+                },
+                "preferences": {
+                    "newsletter": true,
+                    "notifications": false,
+                    "theme": "dark"
+                }
+            },
+            nested: {
+                "user": {
+                    "profile": {
+                        "personal": {
+                            "name": "Emma Wilson",
+                            "age": 28
+                        },
+                        "contact": {
+                            "email": "emma@example.com",
+                            "phone": "555-0199"
+                        }
+                    },
+                    "settings": {
+                        "privacy": {
+                            "public": false,
+                            "searchable": true
+                        }
+                    }
+                }
+            },
+            ecommerce: {
+                "product": "Wireless Headphones",
+                "price": 199.99,
+                "category": "Electronics",
+                "inStock": true,
+                "specifications": {
+                    "brand": "TechBrand",
+                    "model": "WH-1000X",
+                    "color": "Black",
+                    "batteryLife": "30 hours"
+                },
+                "shipping": {
+                    "weight": 0.85,
+                    "dimensions": "7.3 x 2.6 x 9.9 inches",
+                    "freeShipping": true
+                }
+            }
+        };
+
+        // DOM Elements
+        const elements = {
+            themeToggle: document.getElementById('themeToggle'),
+            fileInput: document.getElementById('fileInput'),
+            uploadArea: document.getElementById('uploadArea'),
+            fileInfo: document.getElementById('fileInfo'),
+            fileName: document.getElementById('fileName'),
+            fileSize: document.getElementById('fileSize'),
+            clearFile: document.getElementById('clearFile'),
+            jsonInput: document.getElementById('jsonInput'),
+            clearInput: document.getElementById('clearInput'),
+            formatJson: document.getElementById('formatJson'),
+            generateForm: document.getElementById('generateForm'),
+            validateJson: document.getElementById('validateJson'),
+            statusMessage: document.getElementById('statusMessage'),
+            formOutput: document.getElementById('formOutput'),
+            htmlCode: document.getElementById('htmlCode'),
+            schemaCode: document.getElementById('schemaCode'),
+            copyHtml: document.getElementById('copyHtml'),
+            copySchema: document.getElementById('copySchema'),
+            tabButtons: document.querySelectorAll('.tab-button'),
+            tabPanes: document.querySelectorAll('.tab-pane'),
+            sampleButtons: document.querySelectorAll('.sample-btn')
+        };
+
+        // Initialize Application
+        function init() {
+            applyTheme(state.currentTheme);
+            setupEventListeners();
+            loadSampleData('simple'); // Load default sample
+        }
+
+        // Enhanced Event Listeners
+        function setupEventListeners() {
+            // Existing listeners
+            elements.themeToggle.addEventListener('click', toggleTheme);
+            elements.generateForm.addEventListener('click', generateForm);
+            elements.validateJson.addEventListener('click', validateJson);
+            elements.copyHtml.addEventListener('click', () => copyToClipboard('html'));
+            elements.copySchema.addEventListener('click', () => copyToClipboard('schema'));
+
+            // Tab switching
+            elements.tabButtons.forEach(button => {
+                button.addEventListener('click', () => switchTab(button.dataset.tab));
+            });
+
+            // NEW: File Upload Listeners
+            elements.fileInput.addEventListener('change', handleFileSelect);
+            elements.uploadArea.addEventListener('click', () => elements.fileInput.click());
+            elements.uploadArea.addEventListener('dragover', handleDragOver);
+            elements.uploadArea.addEventListener('dragleave', handleDragLeave);
+            elements.uploadArea.addEventListener('drop', handleDrop);
+            elements.clearFile.addEventListener('click', clearFile);
+
+            // NEW: Input Action Listeners
+            elements.clearInput.addEventListener('click', clearInput);
+            elements.formatJson.addEventListener('click', formatJsonInput);
+
+            // NEW: Sample Data Listeners
+            elements.sampleButtons.forEach(button => {
+                button.addEventListener('click', () => loadSampleData(button.dataset.sample));
+            });
+
+            // Enhanced input validation
+            elements.jsonInput.addEventListener('input', debounce(() => {
+                validateJsonInput();
+                updateInputState();
+            }, 500));
+        }
+
+        // FILE UPLOAD FUNCTIONALITY
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) processFile(file);
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            elements.uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            elements.uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            elements.uploadArea.classList.remove('dragover');
+
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'application/json' || file.name.endsWith('.json') || file.name.endsWith('.txt')) {
+                    processFile(file);
+                } else {
+                    showStatus('Please upload a JSON or TXT file', 'error');
+                }
+            }
+        }
+
+        function processFile(file) {
+            if (file.size > 1024 * 1024) { // 1MB limit
+                showStatus('File too large. Please upload files smaller than 1MB.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    // Try to parse to validate JSON
+                    JSON.parse(content);
+
+                    // If valid, populate the textarea
+                    elements.jsonInput.value = content;
+                    updateInputState();
+
+                    // Show file info
+                    showFileInfo(file);
+
+                    // Auto-format if content is minified
+                    if (!content.includes('\n')) {
+                        formatJsonInput();
+                    }
+
+                    showStatus(`File "${file.name}" loaded successfully!`, 'success');
+                } catch (error) {
+                    showStatus(`Invalid JSON in file: ${error.message}`, 'error');
+                }
+            };
+
+            reader.onerror = function() {
+                showStatus('Error reading file', 'error');
+            };
+
+            reader.readAsText(file);
+        }
+
+        function showFileInfo(file) {
+            state.currentFile = file;
+            elements.fileName.textContent = file.name;
+            elements.fileSize.textContent = formatFileSize(file.size);
+            elements.fileInfo.classList.add('show');
+        }
+
+        function clearFile() {
+            state.currentFile = null;
+            elements.fileInput.value = '';
+            elements.fileInfo.classList.remove('show');
+            showStatus('File cleared', 'info');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // INPUT ENHANCEMENT FUNCTIONS
+        function clearInput() {
+            elements.jsonInput.value = '';
+            clearFile();
+            updateInputState();
+            showStatus('Input cleared', 'info');
+        }
+
+        function formatJsonInput() {
+            try {
+                const value = elements.jsonInput.value.trim();
+                if (value) {
+                    const parsed = JSON.parse(value);
+                    const formatted = JSON.stringify(parsed, null, 2);
+                    elements.jsonInput.value = formatted;
+                    updateInputState();
+                    showStatus('JSON formatted successfully', 'success');
+                }
+            } catch (error) {
+                showStatus(`Cannot format: ${error.message}`, 'error');
+            }
+        }
+
+        function updateInputState() {
+            const hasContent = elements.jsonInput.value.trim().length > 0;
+            if (hasContent) {
+                elements.jsonInput.classList.add('has-content');
+            } else {
+                elements.jsonInput.classList.remove('has-content');
+            }
+        }
+
+        // SAMPLE DATA FUNCTIONS
+        function loadSampleData(sampleType) {
+            if (sampleData[sampleType]) {
+                const jsonString = JSON.stringify(sampleData[sampleType], null, 2);
+                elements.jsonInput.value = jsonString;
+                updateInputState();
+                clearFile(); // Clear any uploaded file
+                showStatus(`Loaded ${sampleType} sample data`, 'info');
+            }
+        }
+
+        // Theme Management (same as before)
+        function applyTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            const sunIcon = elements.themeToggle.querySelector('.sun-icon');
+            const moonIcon = elements.themeToggle.querySelector('.moon-icon');
+
+            if (theme === 'dark') {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            state.currentTheme = state.currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', state.currentTheme);
+            applyTheme(state.currentTheme);
+        }
+
+        // Tab Management (same as before)
+        function switchTab(tabName) {
+            elements.tabButtons.forEach(btn => btn.classList.remove('active'));
+            elements.tabPanes.forEach(pane => pane.classList.remove('active'));
+
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+        }
+
+        // JSON Validation (enhanced)
+        function validateJsonInput() {
+            try {
+                const value = elements.jsonInput.value.trim();
+                if (value) {
+                    JSON.parse(value);
+                    return true;
+                }
+            } catch (error) {
+                return false;
+            }
+            return false;
+        }
+
+        // All other functions remain the same as the previous version...
+        // (generateForm, displayResults, showStatus, copyToClipboard, etc.)
+
+        async function generateForm() {
+            if (!validateJsonInput()) {
+                showStatus('Please enter valid JSON before generating form', 'error');
+                return;
+            }
+
+            const jsonData = elements.jsonInput.value.trim();
+            const framework = document.querySelector('input[name="framework"]:checked').value;
+
+            showLoading('Generating form...');
+
+            try {
+                const htmlResponse = await fetch(`${state.baseUrl}/forms`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${state.apiKey}`,
+                        'X-Operation': 'FORM',
+                        'X-Response-Type': 'html',
+                        'X-CSS-Framework': framework,
+                        'X-JSON-Payload': jsonData
+                    }
+                });
+
+                const schemaResponse = await fetch(`${state.baseUrl}/forms`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${state.apiKey}`,
+                        'X-Operation': 'FORM',
+                        'X-Response-Type': 'json',
+                        'X-JSON-Payload': jsonData
+                    }
+                });
+
+                if (htmlResponse.ok && schemaResponse.ok) {
+                    const htmlCode = await htmlResponse.text();
+                    const schemaData = await schemaResponse.json();
+
+                    displayResults(htmlCode, schemaData);
+                    showStatus('Form generated successfully!', 'success');
+                } else {
+                    throw new Error('Failed to generate form');
+                }
+            } catch (error) {
+                console.error('Error generating form:', error);
+                showStatus('Error generating form. Using local generation as fallback.', 'error');
+                generateFormLocally(jsonData, framework);
+            }
+        }
+
+        function generateFormLocally(jsonData, framework) {
+            try {
+                const data = JSON.parse(jsonData);
+                const html = generateHTMLForm(data, framework);
+                const schema = generateJSONSchema(data);
+
+                displayResults(html, schema);
+                showStatus('Form generated !!', 'success');
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function generateHTMLForm(obj, framework = 'none', parentKey = '') {
+            const cssClasses = {
+                none: { formGroup: 'form-group', label: 'form-label', input: 'input-field' },
+                bootstrap: { formGroup: 'mb-3', label: 'form-label', input: 'form-control' },
+                materialize: { formGroup: 'input-field', label: 'active', input: 'validate' }
+            };
+
+            const css = cssClasses[framework] || cssClasses.none;
+            let html = '';
+
+            for (const [key, value] of Object.entries(obj)) {
+                const fieldId = parentKey ? `${parentKey}_${key}` : key;
+                const fieldName = fieldId;
+
+                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    html += `<fieldset class="form-section">
+                        <legend class="section-title">${key.charAt(0).toUpperCase() + key.slice(1)}</legend>
+                        ${generateHTMLForm(value, framework, fieldId)}
+                    </fieldset>`;
+                } else {
+                    let inputType = 'text';
+                    let inputValue = String(value);
+
+                    if (typeof value === 'number') inputType = 'number';
+                    else if (typeof value === 'boolean') {
+                        inputType = 'checkbox';
+                        inputValue = value ? 'checked' : '';
+                    } else if (key.toLowerCase().includes('email')) inputType = 'email';
+                    else if (key.toLowerCase().includes('password')) inputType = 'password';
+
+                    html += `<div class="${css.formGroup}">
+                        <label for="${fieldId}" class="${css.label}">${key.charAt(0).toUpperCase() + key.slice(1)}</label>
+                        <input type="${inputType}" 
+                               class="${css.input}" 
+                               id="${fieldId}" 
+                               name="${fieldName}"
+                               ${inputType === 'checkbox' ? inputValue : `value="${inputValue}"`}>
+                    </div>`;
+                }
+            }
+
+            return html;
+        }
+
+        function generateJSONSchema(obj) {
+            const schema = { type: 'object', properties: {} };
+
+            function addProperty(obj, schemaNode) {
+                for (const [key, value] of Object.entries(obj)) {
+                    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                        schemaNode.properties[key] = { type: 'object', properties: {} };
+                        addProperty(value, schemaNode.properties[key]);
+                    } else if (Array.isArray(value)) {
+                        schemaNode.properties[key] = {
+                            type: 'array',
+                            items: value.length > 0 ? { type: typeof value[0] } : { type: 'string' }
+                        };
+                    } else {
+                        schemaNode.properties[key] = { type: typeof value };
+                    }
+                }
+            }
+
+            addProperty(obj, schema);
+            return schema;
+        }
+
+        function displayResults(html, schema) {
+            elements.formOutput.innerHTML = html;
+            elements.formOutput.classList.add('fade-in');
+
+            elements.htmlCode.textContent = formatHTML(html);
+            elements.schemaCode.textContent = JSON.stringify(schema, null, 2);
+
+            Prism.highlightElement(elements.htmlCode);
+            Prism.highlightElement(elements.schemaCode);
+        }
+
+        async function validateJson() {
+            if (!validateJsonInput()) {
+                showStatus('Please enter valid JSON first', 'error');
+                return;
+            }
+
+            showStatus('JSON is valid!', 'success');
+        }
+
+        function showStatus(message, type) {
+            elements.statusMessage.className = `status-message status-${type}`;
+            elements.statusMessage.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    ${getStatusIcon(type)}
+                </svg>
+                ${message}
+            `;
+        }
+
+        function showLoading(message) {
+            elements.statusMessage.className = 'status-message status-info';
+            elements.statusMessage.innerHTML = `
+                <div class="spinner"></div>
+                ${message}
+            `;
+        }
+
+        function getStatusIcon(type) {
+            const icons = {
+                success: '<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                error: '<path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                info: '<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+            };
+            return icons[type] || icons.info;
+        }
+
+        function copyToClipboard(type) {
+            const content = type === 'html' ? elements.htmlCode.textContent : elements.schemaCode.textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                const button = type === 'html' ? elements.copyHtml : elements.copySchema;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = 'rgba(16, 185, 129, 0.2)';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function formatHTML(html) {
+            return html.replace(/></g, '>\n<').replace(/\n/g, '\n  ');
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

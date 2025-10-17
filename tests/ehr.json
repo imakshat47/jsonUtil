@@ -1,0 +1,12 @@
+{
+  "name": "Alice",
+  "age": 25,
+  "procedure": {
+    "type": "DV_CODED_TEXT",
+    "value": "CIRURGIA BARIATRICA",
+    "defining_code": {
+      "terminology_id": { "value": "TP_ATEND" },
+      "code_string": "05"
+    }
+  }
+}

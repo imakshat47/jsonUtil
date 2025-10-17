@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON EHR Utils - Request Tester</title>
+</head>
+<body>
+  <h1>📄 JSON EHR Request Tester</h1>
+
+  <!-- File chooser -->
+  <label>Select JSON File: <input type="file" id="fileInput" accept=".json"></label>
+  <br><br>
+
+  <!-- CSS framework selector -->
+  <label>Choose CSS Framework:
+    <select id="cssFramework">
+      <option value="none">No CSS (Vanilla)</option>
+      <option value="bootstrap">Bootstrap</option>
+      <option value="materialize">Materialize</option>
+    </select>
+  </label>
+  <br><br>
+
+  <button id="sendBtn">Generate Form</button>
+
+  <!-- Container where server-generated form will be injected -->
+  <div id="formContainer" style="margin-top:20px;"></div>
+
+  <!-- CRUD operation buttons -->
+  <div id="crudControls" style="display:none; margin-top:20px;">
+    <button onclick="sendCRUD('CREATE')">Create</button>
+    <button onclick="sendCRUD('READ')">Read</button>
+    <button onclick="sendCRUD('UPDATE')">Update</button>
+    <button onclick="sendCRUD('DELETE')">Delete</button>
+  </div>
+
+  <script>
+    let currentSchema = null;
+
+    const cssCDNs = {
+      none: [],
+      bootstrap: [
+        "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css",
+        "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      ],
+      materialize: [
+        "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css",
+        "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
+      ]
+    };
+
+    function loadFramework(framework) {
+      document.querySelectorAll("link[data-dynamic], script[data-dynamic]").forEach(el => el.remove());
+      if (cssCDNs[framework]) {
+        cssCDNs[framework].forEach(url => {
+          if (url.endsWith(".css")) {
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = url;
+            link.setAttribute("data-dynamic", "true");
+            document.head.appendChild(link);
+          } else {
+            const script = document.createElement("script");
+            script.src = url;
+            script.setAttribute("data-dynamic", "true");
+            document.body.appendChild(script);
+          }
+        });
+      }
+    }
+
+    document.getElementById("sendBtn").addEventListener("click", async () => {
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) {
+        alert("Please select a JSON file first.");
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        currentSchema = JSON.parse(text);
+
+        const cssFramework = document.getElementById("cssFramework").value;
+        loadFramework(cssFramework);
+
+        const res = await fetch("http://localhost:4000/v1/forms", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer my-secret-api-key",
+            "X-Operation": "FORM",
+            "X-Response-Type": "html",
+            "X-CSS-Framework": cssFramework,
+            "X-JSON-Payload": JSON.stringify(currentSchema)
+          }
+        });
+
+        const html = await res.text();
+        document.getElementById("formContainer").innerHTML = `<form id="ehrForm">${html}</form>`;
+        document.getElementById("crudControls").style.display = "block";
+
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    });
+
+    function collectFormData() {
+      const form = document.getElementById("ehrForm");
+      const data = {};
+      const formData = new FormData(form);
+      for (const [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      return data;
+    }
+
+    async function sendCRUD(operation) {
+      try {
+        const payload = collectFormData();
+
+        const res = await fetch("http://localhost:4000/v1/forms", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer my-secret-api-key",
+            "X-Operation": operation,
+            "X-Response-Type": "json",
+            "X-JSON-Payload": JSON.stringify(payload)
+          }
+        });
+
+        const json = await res.json();
+        alert(`CRUD Response (${operation}):\n` + JSON.stringify(json, null, 2));
+      } catch (err) {
+        console.error("CRUD error:", err);
+      }
+    }
+  </script>
+</body>
+</html>
