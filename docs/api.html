@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - JSON Utils</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🔧 JSON Utils</h1>
+            <p class="tagline">API Reference</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="api.html" class="active">API Reference</a></li>
+                <li><a href="usage.html">Usage Examples</a></li>
+                <li><a href="contributing.html">Contributing</a></li>
+                <li><a href="https://github.com/youruser/jsonutils" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="api-overview">
+            <h2>📡 API Overview</h2>
+            <div class="api-info">
+                <p><strong>Base URL:</strong> <code>http://localhost:4000/v1</code></p>
+                <p><strong>Authentication:</strong> API Key via Authorization header</p>
+                <p><strong>Content Type:</strong> Headers-based payload (X-JSON-Payload)</p>
+            </div>
+        </section>
+
+        <section class="auth-section">
+            <h2>🔐 Authentication</h2>
+            <p>All endpoints require an Authorization header with your API key:</p>
+            <div class="code-block">
+                <pre><code>Authorization: Bearer YOUR_API_KEY</code></pre>
+            </div>
+            <div class="note">
+                <p><strong>Note:</strong> Set your API key in the <code>.env</code> file as <code>API_KEY=your-secret-key</code></p>
+            </div>
+        </section>
+
+        <section class="headers-section">
+            <h2>📋 Request Headers</h2>
+            <div class="header-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Header</th>
+                            <th>Values</th>
+                            <th>Description</th>
+                            <th>Required</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Authorization</code></td>
+                            <td><code>Bearer &lt;API_KEY&gt;</code></td>
+                            <td>API authentication</td>
+                            <td>✅ Yes</td>
+                        </tr>
+                        <tr>
+                            <td><code>X-Operation</code></td>
+                            <td><code>FORM</code>, <code>VALIDATE</code>, <code>CREATE</code>, <code>READ</code>, <code>UPDATE</code>, <code>DELETE</code></td>
+                            <td>Determines operation type</td>
+                            <td>✅ Yes</td>
+                        </tr>
+                        <tr>
+                            <td><code>X-Response-Type</code></td>
+                            <td><code>html</code>, <code>json</code></td>
+                            <td>Output format (FORM only)</td>
+                            <td>🔶 FORM only</td>
+                        </tr>
+                        <tr>
+                            <td><code>X-CSS-Framework</code></td>
+                            <td><code>none</code>, <code>bootstrap</code>, <code>materialize</code></td>
+                            <td>CSS framework for HTML forms</td>
+                            <td>❌ Optional</td>
+                        </tr>
+                        <tr>
+                            <td><code>X-JSON-Payload</code></td>
+                            <td>JSON string</td>
+                            <td>The data to process</td>
+                            <td>✅ Yes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="endpoints-section">
+            <h2>🛠️ Endpoints</h2>
+
+            <div class="endpoint">
+                <h3>POST /v1/forms</h3>
+                <p class="endpoint-desc">Multi-purpose endpoint for form generation, validation, and CRUD operations.</p>
+
+                <h4>Operation: FORM</h4>
+                <p>Generates HTML forms or JSON Schemas from input JSON.</p>
+                <div class="operation-details">
+                    <h5>Headers:</h5>
+                    <ul>
+                        <li><code>X-Operation: FORM</code></li>
+                        <li><code>X-Response-Type: html|json</code></li>
+                        <li><code>X-CSS-Framework: none|bootstrap|materialize</code> (optional, default: none)</li>
+                        <li><code>X-JSON-Payload: {"key":"value"}</code></li>
+                    </ul>
+
+                    <h5>Response:</h5>
+                    <ul>
+                        <li><strong>html:</strong> Returns HTML form markup with specified framework classes</li>
+                        <li><strong>json:</strong> Returns inferred JSON Schema</li>
+                    </ul>
+                </div>
+
+                <h4>Operation: VALIDATE</h4>
+                <p>Validates the payload against its auto-generated schema.</p>
+                <div class="operation-details">
+                    <h5>Headers:</h5>
+                    <ul>
+                        <li><code>X-Operation: VALIDATE</code></li>
+                        <li><code>X-JSON-Payload: {"key":"value"}</code></li>
+                    </ul>
+
+                    <h5>Response:</h5>
+                    <div class="code-block">
+                        <pre><code>{
+  "valid": true|false,
+  "errors": [...]  // Ajv validation errors if any
+}</code></pre>
+                    </div>
+                </div>
+
+                <h4>Operation: CRUD</h4>
+                <p>Stateless CRUD operations that echo the input.</p>
+                <div class="operation-details">
+                    <h5>Headers:</h5>
+                    <ul>
+                        <li><code>X-Operation: CREATE|READ|UPDATE|DELETE</code></li>
+                        <li><code>X-JSON-Payload: {"key":"value"}</code></li>
+                    </ul>
+
+                    <h5>Response:</h5>
+                    <div class="code-block">
+                        <pre><code>{
+  "status": "created|read|updated|deleted",
+  "data": { /* your payload */ }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <h3>GET /v1/logs</h3>
+                <p class="endpoint-desc">Retrieves decrypted request logs for debugging.</p>
+
+                <h5>Headers:</h5>
+                <ul>
+                    <li><code>Authorization: Bearer YOUR_API_KEY</code></li>
+                </ul>
+
+                <h5>Response:</h5>
+                <p>JSON array of decrypted log entries (as strings):</p>
+                <div class="code-block">
+                    <pre><code>[
+  "{\"time\":\"2025-01-01T12:00:00Z\",\"method\":\"POST\",\"url\": \"/v1/forms\"}",
+  "{\"time\":\"2025-01-01T12:01:00Z\",\"method\":\"GET\",\"url\": \"/v1/logs\"}"
+]</code></pre>
+                </div>
+
+                <div class="note">
+                    <p><strong>Note:</strong> Each array element is a JSON string. Parse with <code>JSON.parse()</code> to access log fields.</p>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <h3>GET /v1</h3>
+                <p class="endpoint-desc">Health check endpoint.</p>
+
+                <h5>Response:</h5>
+                <div class="code-block">
+                    <pre><code>{
+  "status": "ok",
+  "service": "JSON EHR Utils API"
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="css-frameworks">
+            <h2>🎨 CSS Framework Support</h2>
+            <p>Choose the appropriate framework for your HTML form output:</p>
+
+            <div class="framework-grid">
+                <div class="framework-card">
+                    <h3>none</h3>
+                    <p>Semantic HTML with clean class names for custom styling:</p>
+                    <ul>
+                        <li><code>form-group</code> - Wrapper div</li>
+                        <li><code>form-label</code> - Label elements</li>
+                        <li><code>input-field</code> - Input elements</li>
+                        <li><code>section-title</code> - Section headers</li>
+                    </ul>
+                </div>
+
+                <div class="framework-card">
+                    <h3>bootstrap</h3>
+                    <p>Ready for Bootstrap 5:</p>
+                    <ul>
+                        <li><code>mb-3</code> - Form groups</li>
+                        <li><code>form-label</code> - Labels</li>
+                        <li><code>form-control</code> - Inputs</li>
+                        <li><code>border p-3 mb-3</code> - Fieldsets</li>
+                    </ul>
+                </div>
+
+                <div class="framework-card">
+                    <h3>materialize</h3>
+                    <p>Compatible with Materialize CSS:</p>
+                    <ul>
+                        <li><code>input-field</code> - Form groups</li>
+                        <li><code>active</code> - Labels</li>
+                        <li><code>validate</code> - Inputs</li>
+                        <li><code>card-panel</code> - Fieldsets</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="error-handling">
+            <h2>⚠️ Error Handling</h2>
+            <div class="error-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Status Code</th>
+                            <th>Error</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>403</td>
+                            <td>Unauthorized</td>
+                            <td>Missing or invalid API key in Authorization header</td>
+                        </tr>
+                        <tr>
+                            <td>400</td>
+                            <td>Bad Request</td>
+                            <td>Invalid JSON in X-JSON-Payload header</td>
+                        </tr>
+                        <tr>
+                            <td>500</td>
+                            <td>Internal Error</td>
+                            <td>Server-side processing error</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 JSON Utils. Open source utility for dynamic form generation.</p>
+            <p>
+                <a href="https://github.com/youruser/jsonutils">GitHub</a> | 
+                <a href="https://github.com/youruser/jsonutils/issues">Issues</a> | 
+                <a href="contributing.html">Contribute</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

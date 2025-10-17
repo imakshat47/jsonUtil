@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Utils - Documentation</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🔧 JSON Utils</h1>
+            <p class="tagline">Runtime JSON → HTML Forms & JSON Schema API</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="api.html">API Reference</a></li>
+                <li><a href="usage.html">Usage Examples</a></li>
+                <li><a href="contributing.html">Contributing</a></li>
+                <li><a href="https://github.com/youruser/jsonutils" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <h2>Convert Any JSON to Forms in Real-Time</h2>
+            <p class="lead">A backend utility that accepts arbitrary JSON payloads at runtime and generates HTML forms or JSON Schemas with validation, stateless CRUD operations, and encrypted request logging.</p>
+
+            <div class="quick-start">
+                <h3>🚀 Quick Start</h3>
+                <div class="code-block">
+                    <pre><code>git clone https://github.com/youruser/jsonutils
+cd jsonutils
+npm install
+cp .env.example .env  # Set API_KEY and SYSTEM_KEY
+npm start  # → http://localhost:4000</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>✨ Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🎨 Three Rendering Modes</h3>
+                    <p><strong>none</strong> → Semantic HTML classes<br>
+                    <strong>bootstrap</strong> → Bootstrap 5 ready<br>
+                    <strong>materialize</strong> → Materialize CSS ready</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>⚡ Runtime Processing</h3>
+                    <p>Pass any JSON structure via headers and get instant HTML forms or JSON Schemas without predefined templates.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>🔒 Encrypted Logging</h3>
+                    <p>All requests logged with AES-256-CBC encryption. Access decrypted logs via API for debugging.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>✅ Built-in Validation</h3>
+                    <p>Auto-generates JSON Schema from payloads and validates using Ajv with detailed error reporting.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>🔄 Stateless CRUD</h3>
+                    <p>Echo-based CRUD operations for rapid prototyping without database setup.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>🌐 CORS Enabled</h3>
+                    <p>Ready for cross-origin requests and frontend integration during development.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="demo">
+            <h2>💫 How It Works</h2>
+            <div class="demo-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Send JSON Payload</h3>
+                    <p>POST to <code>/v1/forms</code> with your JSON in <code>X-JSON-Payload</code> header</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Choose Output</h3>
+                    <p>Set <code>X-Operation</code> to FORM, VALIDATE, or CRUD operation</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Results</h3>
+                    <p>Receive HTML form, JSON Schema, validation results, or CRUD echo</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="example-preview">
+            <h2>📋 Example Request</h2>
+            <div class="code-example">
+                <h4>Input JSON:</h4>
+                <div class="code-block">
+                    <pre><code>{"name": "Alice", "age": 25, "email": "alice@example.com"}</code></pre>
+                </div>
+
+                <h4>cURL Command:</h4>
+                <div class="code-block">
+                    <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: FORM" \
+  -H "X-Response-Type: html" \
+  -H "X-CSS-Framework: bootstrap" \
+  -H 'X-JSON-Payload: {"name":"Alice","age":25,"email":"alice@example.com"}'</code></pre>
+                </div>
+
+                <h4>Generated HTML Form (Bootstrap):</h4>
+                <div class="code-block">
+                    <pre><code>&lt;div class="mb-3"&gt;
+  &lt;label for="name" class="form-label"&gt;Name&lt;/label&gt;
+  &lt;input type="text" class="form-control" id="name" name="name" value="Alice"&gt;
+&lt;/div&gt;
+&lt;div class="mb-3"&gt;
+  &lt;label for="age" class="form-label"&gt;Age&lt;/label&gt;
+  &lt;input type="number" class="form-control" id="age" name="age" value="25"&gt;
+&lt;/div&gt;
+&lt;div class="mb-3"&gt;
+  &lt;label for="email" class="form-label"&gt;Email&lt;/label&gt;
+  &lt;input type="text" class="form-control" id="email" name="email" value="alice@example.com"&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="getting-started">
+            <h2>🏁 Getting Started</h2>
+            <div class="requirements">
+                <h3>Requirements</h3>
+                <ul>
+                    <li>Node.js 18+ and npm</li>
+                    <li>Git for cloning the repository</li>
+                </ul>
+            </div>
+
+            <div class="installation">
+                <h3>Installation Steps</h3>
+                <ol>
+                    <li><strong>Clone the repository:</strong>
+                        <div class="code-block">
+                            <pre><code>git clone https://github.com/youruser/jsonutils
+cd jsonutils</code></pre>
+                        </div>
+                    </li>
+                    <li><strong>Install dependencies:</strong>
+                        <div class="code-block">
+                            <pre><code>npm install</code></pre>
+                        </div>
+                    </li>
+                    <li><strong>Configure environment:</strong>
+                        <div class="code-block">
+                            <pre><code>cp .env.example .env</code></pre>
+                        </div>
+                        <p>Edit <code>.env</code> and set:</p>
+                        <ul>
+                            <li><code>PORT=4000</code> (or your preferred port)</li>
+                            <li><code>API_KEY=your-secret-api-key</code></li>
+                            <li><code>SYSTEM_KEY=your-encryption-key</code></li>
+                        </ul>
+                    </li>
+                    <li><strong>Start the server:</strong>
+                        <div class="code-block">
+                            <pre><code>npm start</code></pre>
+                        </div>
+                    </li>
+                    <li><strong>Test the API:</strong>
+                        <p>Visit <a href="http://localhost:4000/v1">http://localhost:4000/v1</a> to see the status endpoint.</p>
+                    </li>
+                </ol>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 JSON Utils. Open source utility for dynamic form generation.</p>
+            <p>
+                <a href="https://github.com/youruser/jsonutils">GitHub</a> | 
+                <a href="https://github.com/youruser/jsonutils/issues">Issues</a> | 
+                <a href="contributing.html">Contribute</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

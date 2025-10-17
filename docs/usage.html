@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usage Examples - JSON Utils</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🔧 JSON Utils</h1>
+            <p class="tagline">Usage Examples & Tutorials</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="api.html">API Reference</a></li>
+                <li><a href="usage.html" class="active">Usage Examples</a></li>
+                <li><a href="contributing.html">Contributing</a></li>
+                <li><a href="https://github.com/youruser/jsonutils" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="intro">
+            <h2>📚 Usage Examples</h2>
+            <p>Explore real-world examples of using JSON Utils to generate forms, validate data, and handle CRUD operations.</p>
+        </section>
+
+        <section class="example-section">
+            <h2>🎨 Generate HTML Forms</h2>
+
+            <div class="example">
+                <h3>Basic Form (No Framework)</h3>
+                <div class="example-content">
+                    <h4>Input JSON:</h4>
+                    <div class="code-block">
+                        <pre><code>{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "age": 30,
+  "isActive": true
+}</code></pre>
+                    </div>
+
+                    <h4>Request:</h4>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: FORM" \
+  -H "X-Response-Type: html" \
+  -H "X-CSS-Framework: none" \
+  -H 'X-JSON-Payload: {"name":"John Doe","email":"john@example.com","age":30,"isActive":true}'</code></pre>
+                    </div>
+
+                    <h4>Generated HTML:</h4>
+                    <div class="code-block">
+                        <pre><code>&lt;div class="form-group"&gt;
+  &lt;label for="name" class="form-label"&gt;Name&lt;/label&gt;
+  &lt;input type="text" class="input-field" id="name" name="name" value="John Doe"&gt;
+&lt;/div&gt;
+&lt;div class="form-group"&gt;
+  &lt;label for="email" class="form-label"&gt;Email&lt;/label&gt;
+  &lt;input type="text" class="input-field" id="email" name="email" value="john@example.com"&gt;
+&lt;/div&gt;
+&lt;div class="form-group"&gt;
+  &lt;label for="age" class="form-label"&gt;Age&lt;/label&gt;
+  &lt;input type="number" class="input-field" id="age" name="age" value="30"&gt;
+&lt;/div&gt;
+&lt;div class="form-group"&gt;
+  &lt;label for="isActive" class="form-label"&gt;IsActive&lt;/label&gt;
+  &lt;input type="checkbox" class="input-field" id="isActive" name="isActive" checked&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example">
+                <h3>Bootstrap Form</h3>
+                <div class="example-content">
+                    <h4>Request:</h4>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: FORM" \
+  -H "X-Response-Type: html" \
+  -H "X-CSS-Framework: bootstrap" \
+  -H 'X-JSON-Payload: {"firstName":"Alice","lastName":"Smith","phone":"555-0123"}'</code></pre>
+                    </div>
+
+                    <h4>Generated HTML:</h4>
+                    <div class="code-block">
+                        <pre><code>&lt;div class="mb-3"&gt;
+  &lt;label for="firstName" class="form-label"&gt;FirstName&lt;/label&gt;
+  &lt;input type="text" class="form-control" id="firstName" name="firstName" value="Alice"&gt;
+&lt;/div&gt;
+&lt;div class="mb-3"&gt;
+  &lt;label for="lastName" class="form-label"&gt;LastName&lt;/label&gt;
+  &lt;input type="text" class="form-control" id="lastName" name="lastName" value="Smith"&gt;
+&lt;/div&gt;
+&lt;div class="mb-3"&gt;
+  &lt;label for="phone" class="form-label"&gt;Phone&lt;/label&gt;
+  &lt;input type="text" class="form-control" id="phone" name="phone" value="555-0123"&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example">
+                <h3>Materialize Form</h3>
+                <div class="example-content">
+                    <h4>Request:</h4>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: FORM" \
+  -H "X-Response-Type: html" \
+  -H "X-CSS-Framework: materialize" \
+  -H 'X-JSON-Payload: {"title":"Product Name","price":29.99,"category":"Electronics"}'</code></pre>
+                    </div>
+
+                    <h4>Generated HTML:</h4>
+                    <div class="code-block">
+                        <pre><code>&lt;div class="input-field"&gt;
+  &lt;label for="title" class="active"&gt;Title&lt;/label&gt;
+  &lt;input type="text" class="validate" id="title" name="title" value="Product Name"&gt;
+&lt;/div&gt;
+&lt;div class="input-field"&gt;
+  &lt;label for="price" class="active"&gt;Price&lt;/label&gt;
+  &lt;input type="number" class="validate" id="price" name="price" value="29.99"&gt;
+&lt;/div&gt;
+&lt;div class="input-field"&gt;
+  &lt;label for="category" class="active"&gt;Category&lt;/label&gt;
+  &lt;input type="text" class="validate" id="category" name="category" value="Electronics"&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="example-section">
+            <h2>📋 Generate JSON Schemas</h2>
+
+            <div class="example">
+                <h3>Schema Generation</h3>
+                <div class="example-content">
+                    <h4>Input JSON:</h4>
+                    <div class="code-block">
+                        <pre><code>{
+  "user": {
+    "profile": {
+      "name": "Alice Johnson",
+      "age": 28
+    },
+    "preferences": {
+      "newsletter": true,
+      "theme": "dark"
+    }
+  },
+  "timestamp": "2025-01-15T10:30:00Z"
+}</code></pre>
+                    </div>
+
+                    <h4>Request:</h4>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: FORM" \
+  -H "X-Response-Type: json" \
+  -H 'X-JSON-Payload: {"user":{"profile":{"name":"Alice Johnson","age":28},"preferences":{"newsletter":true,"theme":"dark"}},"timestamp":"2025-01-15T10:30:00Z"}'</code></pre>
+                    </div>
+
+                    <h4>Generated JSON Schema:</h4>
+                    <div class="code-block">
+                        <pre><code>{
+  "type": "object",
+  "properties": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "age": {
+              "type": "number"
+            }
+          }
+        },
+        "preferences": {
+          "type": "object",
+          "properties": {
+            "newsletter": {
+              "type": "boolean"
+            },
+            "theme": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="example-section">
+            <h2>✅ Validate JSON</h2>
+
+            <div class="example">
+                <h3>Successful Validation</h3>
+                <div class="example-content">
+                    <h4>Request:</h4>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: VALIDATE" \
+  -H 'X-JSON-Payload: {"name":"Bob Wilson","age":35,"email":"bob@example.com"}'</code></pre>
+                    </div>
+
+                    <h4>Response:</h4>
+                    <div class="code-block">
+                        <pre><code>{
+  "valid": true,
+  "errors": []
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example">
+                <h3>Validation with Errors</h3>
+                <div class="example-content">
+                    <p><em>Note: This example shows conceptual validation errors. Actual validation depends on schema inference.</em></p>
+
+                    <h4>Response (example):</h4>
+                    <div class="code-block">
+                        <pre><code>{
+  "valid": false,
+  "errors": [
+    {
+      "instancePath": "/age",
+      "schemaPath": "#/properties/age/type",
+      "keyword": "type",
+      "params": {"type": "number"},
+      "message": "must be number"
+    }
+  ]
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="example-section">
+            <h2>🔄 CRUD Operations</h2>
+
+            <div class="crud-examples">
+                <div class="example">
+                    <h3>CREATE</h3>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: CREATE" \
+  -H 'X-JSON-Payload: {"id":1,"name":"New Product","price":99.99}'
+
+# Response:
+{
+  "status": "created",
+  "data": {"id":1,"name":"New Product","price":99.99}
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <h3>READ</h3>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: READ" \
+  -H 'X-JSON-Payload: {"id":1}'
+
+# Response:
+{
+  "status": "read",
+  "data": {"id":1}
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <h3>UPDATE</h3>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: UPDATE" \
+  -H 'X-JSON-Payload: {"id":1,"name":"Updated Product","price":89.99}'
+
+# Response:
+{
+  "status": "updated",
+  "data": {"id":1,"name":"Updated Product","price":89.99}
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <h3>DELETE</h3>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-Operation: DELETE" \
+  -H 'X-JSON-Payload: {"id":1}'
+
+# Response:
+{
+  "status": "deleted",
+  "data": {"id":1}
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="example-section">
+            <h2>📊 Access Logs</h2>
+
+            <div class="example">
+                <h3>Retrieve Request Logs</h3>
+                <div class="example-content">
+                    <h4>Request:</h4>
+                    <div class="code-block">
+                        <pre><code>curl -X GET http://localhost:4000/v1/logs \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+                    </div>
+
+                    <h4>Response:</h4>
+                    <div class="code-block">
+                        <pre><code>[
+  "{\"time\":\"2025-01-15T10:30:00.123Z\",\"method\":\"POST\",\"url\": \"/v1/forms\",\"headers\": {\"authorization\":\"Bearer ***\",\"x-operation\":\"FORM\"}}",
+  "{\"time\":\"2025-01-15T10:31:15.456Z\",\"method\":\"POST\",\"url\": \"/v1/forms\",\"headers\": {\"authorization\":\"Bearer ***\",\"x-operation\":\"VALIDATE\"}}"
+]</code></pre>
+                    </div>
+
+                    <h4>Frontend Processing:</h4>
+                    <div class="code-block">
+                        <pre><code>// JavaScript example
+const response = await fetch('/v1/logs', {
+  headers: { 'Authorization': 'Bearer YOUR_API_KEY' }
+});
+const logs = await response.json();
+
+logs.forEach(logString => {
+  const logEntry = JSON.parse(logString);
+  console.log(\`\${logEntry.time}: \${logEntry.method} \${logEntry.url}\`);
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tips-section">
+            <h2>💡 Tips & Best Practices</h2>
+
+            <div class="tip-grid">
+                <div class="tip-card">
+                    <h3>🔑 Environment Setup</h3>
+                    <ul>
+                        <li>Use strong, unique values for API_KEY and SYSTEM_KEY</li>
+                        <li>Keep SYSTEM_KEY stable to preserve log decryption</li>
+                        <li>Use different keys for different environments</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <h3>🎯 Form Generation</h3>
+                    <ul>
+                        <li>Use meaningful field names in your JSON</li>
+                        <li>Choose the CSS framework that matches your frontend</li>
+                        <li>Test with nested objects for complex forms</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <h3>🔍 Debugging</h3>
+                    <ul>
+                        <li>Use the logs endpoint to debug request issues</li>
+                        <li>Check validation errors for schema mismatches</li>
+                        <li>Test with small JSON payloads first</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <h3>🚀 Production</h3>
+                    <ul>
+                        <li>Implement log rotation for large applications</li>
+                        <li>Use HTTPS in production environments</li>
+                        <li>Consider rate limiting for public APIs</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 JSON Utils. Open source utility for dynamic form generation.</p>
+            <p>
+                <a href="https://github.com/youruser/jsonutils">GitHub</a> | 
+                <a href="https://github.com/youruser/jsonutils/issues">Issues</a> | 
+                <a href="contributing.html">Contribute</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

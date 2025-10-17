@@ -1,0 +1,59 @@
+# GitHub Pages Configuration for JSON Utils
+title: JSON Utils
+description: Runtime JSON to HTML Forms & JSON Schema API with validation and encrypted logging
+url: "https://yourusername.github.io"
+baseurl: "/jsonutils"
+
+# Theme
+theme: jekyll-theme-minimal
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Navigation
+navigation:
+  - title: Home
+    url: /
+  - title: API Reference
+    url: /api.html
+  - title: Usage Examples
+    url: /usage.html
+  - title: Contributing
+    url: /contributing.html
+
+# SEO
+author: Your Name
+twitter:
+  username: yourusername
+  card: summary
+
+# GitHub
+github:
+  repository_url: https://github.com/yourusername/jsonutils
+  repository_name: jsonutils
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
+  input: GFM
+
+# Exclude files from build
+exclude:
+  - node_modules/
+  - package.json
+  - package-lock.json
+  - src/
+  - logs/
+  - .env*
+
+# Include files
+include:
+  - assets/
+
+# Collections (if needed for future expansion)
+collections:
+  examples:
+    output: true
+    permalink: /:collection/:name/

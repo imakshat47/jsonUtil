@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contributing - JSON Utils</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🔧 JSON Utils</h1>
+            <p class="tagline">Contributing Guide</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="api.html">API Reference</a></li>
+                <li><a href="usage.html">Usage Examples</a></li>
+                <li><a href="contributing.html" class="active">Contributing</a></li>
+                <li><a href="https://github.com/youruser/jsonutils" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="intro">
+            <h2>🤝 Contributing to JSON Utils</h2>
+            <p>We welcome contributions! Whether you're fixing bugs, adding features, improving documentation, or sharing feedback, your help makes JSON Utils better for everyone.</p>
+        </section>
+
+        <section class="getting-started-contrib">
+            <h2>🚀 Getting Started</h2>
+
+            <div class="setup-steps">
+                <h3>1. Fork & Clone</h3>
+                <div class="code-block">
+                    <pre><code># Fork the repository on GitHub, then:
+git clone https://github.com/YOUR_USERNAME/jsonutils.git
+cd jsonutils
+git remote add upstream https://github.com/originaluser/jsonutils.git</code></pre>
+                </div>
+
+                <h3>2. Set Up Development Environment</h3>
+                <div class="code-block">
+                    <pre><code># Install dependencies
+npm install
+
+# Copy environment template
+cp .env.example .env
+
+# Edit .env with your development keys
+# API_KEY=dev-api-key-123
+# SYSTEM_KEY=dev-system-key-456
+
+# Start the development server
+npm run dev  # or npm start</code></pre>
+                </div>
+
+                <h3>3. Run Tests</h3>
+                <div class="code-block">
+                    <pre><code># Run existing tests
+npm test
+
+# Run tests in watch mode during development
+npm run test:watch</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="workflow">
+            <h2>🔄 Development Workflow</h2>
+
+            <div class="workflow-steps">
+                <div class="step">
+                    <h3>1. Create a Feature Branch</h3>
+                    <div class="code-block">
+                        <pre><code>git checkout -b feature/your-feature-name
+# or
+git checkout -b fix/bug-description</code></pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>2. Make Your Changes</h3>
+                    <ul>
+                        <li>Write clean, readable code</li>
+                        <li>Follow existing code style and conventions</li>
+                        <li>Add tests for new functionality</li>
+                        <li>Update documentation when needed</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h3>3. Test Your Changes</h3>
+                    <div class="code-block">
+                        <pre><code># Run all tests
+npm test
+
+# Test specific functionality manually
+curl -X POST http://localhost:4000/v1/forms \
+  -H "Authorization: Bearer dev-api-key-123" \
+  -H "X-Operation: FORM" \
+  -H "X-Response-Type: html" \
+  -H 'X-JSON-Payload: {"test":"value"}'</code></pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>4. Commit & Push</h3>
+                    <div class="code-block">
+                        <pre><code>git add .
+git commit -m "feat: add new CSS framework support"
+git push origin feature/your-feature-name</code></pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>5. Open a Pull Request</h3>
+                    <p>Go to GitHub and create a pull request with:</p>
+                    <ul>
+                        <li>Clear description of changes</li>
+                        <li>Link to related issues</li>
+                        <li>Screenshots for UI changes</li>
+                        <li>Test results or examples</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="coding-standards">
+            <h2>📋 Coding Standards</h2>
+
+            <div class="standards-grid">
+                <div class="standard-card">
+                    <h3>Code Style</h3>
+                    <ul>
+                        <li>Use ES modules (import/export)</li>
+                        <li>Prefer const/let over var</li>
+                        <li>Use descriptive variable names</li>
+                        <li>Keep functions small and focused</li>
+                        <li>Add JSDoc comments for complex functions</li>
+                    </ul>
+                </div>
+
+                <div class="standard-card">
+                    <h3>File Organization</h3>
+                    <ul>
+                        <li>Group related functionality</li>
+                        <li>Use clear, consistent file naming</li>
+                        <li>Keep configuration separate from logic</li>
+                        <li>Add comments for complex sections</li>
+                    </ul>
+                </div>
+
+                <div class="standard-card">
+                    <h3>Testing</h3>
+                    <ul>
+                        <li>Write tests for new features</li>
+                        <li>Test edge cases and error conditions</li>
+                        <li>Use descriptive test names</li>
+                        <li>Mock external dependencies</li>
+                    </ul>
+                </div>
+
+                <div class="standard-card">
+                    <h3>Security</h3>
+                    <ul>
+                        <li>Never commit secrets or keys</li>
+                        <li>Validate all input data</li>
+                        <li>Handle errors gracefully</li>
+                        <li>Document security implications</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="contribution-types">
+            <h2>🎯 Types of Contributions</h2>
+
+            <div class="contribution-list">
+                <div class="contribution-item">
+                    <h3>🐛 Bug Fixes</h3>
+                    <p>Found a bug? Great! Please:</p>
+                    <ul>
+                        <li>Check if it's already reported in issues</li>
+                        <li>Create a minimal reproduction case</li>
+                        <li>Include error messages and logs</li>
+                        <li>Describe expected vs actual behavior</li>
+                    </ul>
+                </div>
+
+                <div class="contribution-item">
+                    <h3>✨ New Features</h3>
+                    <p>Ideas for new functionality:</p>
+                    <ul>
+                        <li>Open an issue to discuss the feature first</li>
+                        <li>Consider backward compatibility</li>
+                        <li>Add comprehensive tests</li>
+                        <li>Update documentation and examples</li>
+                    </ul>
+                </div>
+
+                <div class="contribution-item">
+                    <h3>📚 Documentation</h3>
+                    <p>Documentation improvements:</p>
+                    <ul>
+                        <li>Fix typos and unclear explanations</li>
+                        <li>Add more usage examples</li>
+                        <li>Improve API documentation</li>
+                        <li>Create tutorials and guides</li>
+                    </ul>
+                </div>
+
+                <div class="contribution-item">
+                    <h3>🎨 UI/UX</h3>
+                    <p>Frontend and design improvements:</p>
+                    <ul>
+                        <li>Improve generated form layouts</li>
+                        <li>Add new CSS framework support</li>
+                        <li>Enhance documentation site design</li>
+                        <li>Create better examples</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-areas">
+            <h2>🚧 Areas for Improvement</h2>
+            <p>Looking for ways to contribute? Here are some areas that could use attention:</p>
+
+            <div class="improvement-areas">
+                <div class="area-card">
+                    <h3>🔧 Core Features</h3>
+                    <ul>
+                        <li>Enhanced JSON Schema inference (arrays, enums)</li>
+                        <li>Custom validation rules</li>
+                        <li>Form field type detection improvements</li>
+                        <li>Nested object form rendering</li>
+                    </ul>
+                </div>
+
+                <div class="area-card">
+                    <h3>🎨 Framework Support</h3>
+                    <ul>
+                        <li>Tailwind CSS framework support</li>
+                        <li>Bulma CSS framework support</li>
+                        <li>Custom CSS framework configurations</li>
+                        <li>React/Vue component generation</li>
+                    </ul>
+                </div>
+
+                <div class="area-card">
+                    <h3>🔒 Security & Performance</h3>
+                    <ul>
+                        <li>JWT authentication support</li>
+                        <li>Rate limiting middleware</li>
+                        <li>Async logging improvements</li>
+                        <li>Log rotation and archival</li>
+                    </ul>
+                </div>
+
+                <div class="area-card">
+                    <h3>🛠️ Developer Experience</h3>
+                    <ul>
+                        <li>OpenAPI/Swagger documentation</li>
+                        <li>Docker containerization</li>
+                        <li>CLI tool for testing</li>
+                        <li>More comprehensive test suite</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="commit-guidelines">
+            <h2>📝 Commit Message Guidelines</h2>
+            <p>Use conventional commit messages for better change tracking:</p>
+
+            <div class="commit-examples">
+                <div class="code-block">
+                    <pre><code>feat: add Tailwind CSS framework support
+fix: resolve form generation for nested objects
+docs: update API examples in README
+test: add validation tests for edge cases
+refactor: improve error handling in logger
+chore: update dependencies to latest versions</code></pre>
+                </div>
+
+                <h4>Format:</h4>
+                <div class="code-block">
+                    <pre><code>type(scope): description
+
+[optional body]
+
+[optional footer]</code></pre>
+                </div>
+
+                <h4>Types:</h4>
+                <ul>
+                    <li><code>feat</code>: New feature</li>
+                    <li><code>fix</code>: Bug fix</li>
+                    <li><code>docs</code>: Documentation changes</li>
+                    <li><code>style</code>: Code style changes (formatting, etc.)</li>
+                    <li><code>refactor</code>: Code refactoring</li>
+                    <li><code>test</code>: Adding or updating tests</li>
+                    <li><code>chore</code>: Maintenance tasks</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="review-process">
+            <h2>👁️ Review Process</h2>
+            <div class="review-info">
+                <h3>What to Expect</h3>
+                <ul>
+                    <li>Maintainers will review your PR within a few days</li>
+                    <li>Feedback may be provided for improvements</li>
+                    <li>CI tests must pass before merging</li>
+                    <li>Significant changes may require discussion</li>
+                </ul>
+
+                <h3>Review Criteria</h3>
+                <ul>
+                    <li>Code quality and readability</li>
+                    <li>Test coverage for new functionality</li>
+                    <li>Documentation updates when needed</li>
+                    <li>Backward compatibility</li>
+                    <li>Security implications</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="community">
+            <h2>💬 Community</h2>
+            <div class="community-info">
+                <h3>Get Help</h3>
+                <ul>
+                    <li>Open an issue for questions or problems</li>
+                    <li>Check existing issues and discussions</li>
+                    <li>Read the documentation thoroughly</li>
+                    <li>Provide detailed information when asking for help</li>
+                </ul>
+
+                <h3>Code of Conduct</h3>
+                <p>We are committed to providing a welcoming and inclusive experience for everyone. Please be respectful in all interactions, provide constructive feedback, and help create a positive community.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 JSON Utils. Open source utility for dynamic form generation.</p>
+            <p>
+                <a href="https://github.com/youruser/jsonutils">GitHub</a> | 
+                <a href="https://github.com/youruser/jsonutils/issues">Issues</a> | 
+                <a href="contributing.html">Contribute</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
